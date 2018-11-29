@@ -7,6 +7,8 @@ import {
   BOOKS_LOADED,
   BooksLoaded,
   LoadBooks,
+  BOOK_ADDED,
+  BookAdded,
 } from './actions';
 
 export interface BookState {
@@ -55,6 +57,13 @@ export function booksReducer(
         ...state,
         items,
         isLoading: false,
+      };
+    }
+    case BOOK_ADDED: {
+      const { payload } = action as BookAdded;
+      return {
+        ...state,
+        items: [...state.items, payload],
       };
     }
   }

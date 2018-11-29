@@ -21,8 +21,4 @@ export class ShelfService {
   fetchBooks() {
     return timer(300).pipe(map(() => this.books));
   }
-
-  addBook(book: NgRxBook) {
-    this.books.push(book);
-  }
 }
