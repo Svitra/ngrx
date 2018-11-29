@@ -1,5 +1,7 @@
-import {Injectable} from '@angular/core';
-import {Collections, NgRxBook} from '../model/models';
+import { Injectable } from '@angular/core';
+import { Collections, NgRxBook } from '../model/models';
+import { timer } from 'rxjs/observable/timer';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class ShelfService {
@@ -11,23 +13,13 @@ export class ShelfService {
     this.books.push(new NgRxBook('Władca Pierscienia', Collections.READ));
     this.books.push(new NgRxBook('JS The Good Parts', Collections.TO_READ));
     this.books.push(new NgRxBook('Clean Code', Collections.READ));
-    this.books.push(new NgRxBook('You don\'t know JS', Collections.READING));
+    this.books.push(
+      new NgRxBook("You don't know JS - don't I", Collections.READING),
+    );
   }
 
-  getBooks() {
-    return this.books;
-  }
-
-  getBooksToRead(): NgRxBook[] {
-    return this.books.filter(book => book.collection === Collections.TO_READ);
-  }
-
-  getBooksReading(): NgRxBook[] {
-    return this.books.filter(book => book.collection === Collections.READING);
-  }
-
-  getBookRead(): NgRxBook[] {
-    return this.books.filter(book => book.collection === Collections.READ);
+  fetchBooks() {
+    return timer(300).pipe(map(() => this.books));
   }
 
   addBook(book: NgRxBook) {

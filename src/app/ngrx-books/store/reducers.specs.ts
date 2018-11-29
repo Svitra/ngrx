@@ -21,9 +21,11 @@ describe('Reducers test', () => {
     const updatedBook = { ...book, collection: Collections.TO_READ };
     const initState: BookState = {
       items: [book2, book],
+      isLoading: false,
     };
     const expectedState: BookState = {
       items: [book2, updatedBook],
+      isLoading: false,
     };
     const action: Action = new UpdateBook(updatedBook);
     const stateAfter = booksReducer(initState, action);

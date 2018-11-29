@@ -1,9 +1,17 @@
 import { NgRxBook, Collections } from '../model/models';
 import { Action } from '@ngrx/store';
-import { UPDATE_BOOK, UpdateBook } from './actions';
+import {
+  UPDATE_BOOK,
+  UpdateBook,
+  LOAD_BOOKS,
+  BOOKS_LOADED,
+  BooksLoaded,
+  LoadBooks,
+} from './actions';
 
 export interface BookState {
   items: NgRxBook[];
+  isLoading: boolean;
 }
 
 export const initialState: BookState = {
@@ -15,6 +23,7 @@ export const initialState: BookState = {
     new NgRxBook('Clean Code vs', Collections.READ),
     new NgRxBook("You don't know ECMA6", Collections.READING),
   ],
+  isLoading: false,
 };
 
 export function booksReducer(
@@ -32,6 +41,20 @@ export function booksReducer(
       return {
         ...state,
         items,
+      };
+    }
+    case LOAD_BOOKS: {
+      return {
+        ...state,
+        isLoading: true,
+      };
+    }
+    case BOOKS_LOADED: {
+      const { payload: items } = action as BooksLoaded;
+      return {
+        ...state,
+        items,
+        isLoading: false,
       };
     }
   }

@@ -7,6 +7,8 @@ import { ShelfService } from './services/shelf.service';
 import { BookOnShelfFormComponent } from './book-on-shelf-form/book-on-shelf-form.component';
 import { StoreModule } from '@ngrx/store';
 import { reduceMap } from './store';
+import { EffectsModule } from '@ngrx/effects';
+import { BooksEffects } from './store/effects';
 
 @NgModule({
   imports: [
@@ -15,20 +17,21 @@ import { reduceMap } from './store';
       { path: '', redirectTo: '/shelf', pathMatch: 'full' },
       {
         path: 'shelf',
-        component: BooksShelfComponent
+        component: BooksShelfComponent,
       },
       {
         path: 'shelf/:collection',
-        component: BooksShelfComponent
-      }
+        component: BooksShelfComponent,
+      },
     ]),
-    StoreModule.forRoot(reduceMap)
+    StoreModule.forRoot(reduceMap),
+    EffectsModule.forRoot([BooksEffects]),
   ],
   declarations: [
     BooksShelfComponent,
     BooksOnShelfComponent,
-    BookOnShelfFormComponent
+    BookOnShelfFormComponent,
   ],
-  providers: [ShelfService]
+  providers: [ShelfService],
 })
 export class NgrxBooksModule {}
