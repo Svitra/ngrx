@@ -1,6 +1,14 @@
 import { Collections, NgRxBook } from '../model/models';
 import { Action } from '@ngrx/store';
-import { ADD_BOOK, AddBook, BOOKS_LOADED, BooksLoaded, LOAD_BOOKS, UPDATE_BOOK, UpdateBook } from './actions';
+import {
+  ADD_BOOK,
+  AddBook,
+  BOOKS_LOADED,
+  BooksLoaded,
+  LOAD_BOOKS,
+  UPDATE_BOOK,
+  UpdateBook,
+} from './actions';
 
 export interface BooksState {
   loading: boolean;
@@ -9,27 +17,21 @@ export interface BooksState {
 
 export const initialBooksState = {
   loading: false,
-  items: [
-    new NgRxBook('Gra o Tron', Collections.TO_READ),
-    new NgRxBook('Wiedźmin', Collections.READING),
-    new NgRxBook('Władca Pierscienia', Collections.READ),
-    new NgRxBook('JS The Good Parts', Collections.TO_READ),
-    new NgRxBook('Clean Code', Collections.READ),
-    new NgRxBook('You don\'t know JS', Collections.READING),
-  ]
+  items: [],
 };
 
-export function booksReducer(state: BooksState = initialBooksState, action: Action) {
+export function booksReducer(
+  state: BooksState = initialBooksState,
+  action: Action,
+) {
   console.group('%cBooks reducer:', 'color: orange;');
   console.log(state, action);
   console.groupEnd();
   switch (action.type) {
     case UPDATE_BOOK: {
       const { payload } = action as UpdateBook;
-      const items = state.items.map(
-        book => payload.id === book.id ?
-          { ...book, ...payload} :
-          book
+      const items = state.items.map(book =>
+        payload.id === book.id ? { ...book, ...payload } : book,
       );
       return { ...state, items };
     }
@@ -40,7 +42,7 @@ export function booksReducer(state: BooksState = initialBooksState, action: Acti
       };
     }
     case BOOKS_LOADED: {
-      const {payload: items} = action as BooksLoaded;
+      const { payload: items } = action as BooksLoaded;
       return {
         ...state,
         loading: false,
@@ -48,7 +50,7 @@ export function booksReducer(state: BooksState = initialBooksState, action: Acti
       };
     }
     case ADD_BOOK: {
-      const {payload: item} = action as AddBook;
+      const { payload: item } = action as AddBook;
       return {
         ...state,
         loading: false,

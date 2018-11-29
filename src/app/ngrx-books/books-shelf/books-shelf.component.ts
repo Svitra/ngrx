@@ -12,11 +12,14 @@ import { AddBook, LoadBooks, UpdateBook } from '../store/actions';
 @Component({
   selector: 'app-books-shelf',
   templateUrl: './books-shelf.component.html',
-  styleUrls: ['./books-shelf.component.scss']
+  styleUrls: ['./books-shelf.component.scss'],
 })
 export class BooksShelfComponent implements OnInit {
   books$: Observable<NgRxBook[]>;
   title: string;
+  loading$ = this.store$.pipe({
+    select(selectLoading)
+  });
   mode: Collections | undefined;
   collections = Collections;
 
@@ -36,25 +39,25 @@ export class BooksShelfComponent implements OnInit {
   }
 
   private getData() {
-    this.books$ = this.store$
-      .pipe(
-        select(selectBookItems),
-        map((bookItems: NgRxBook[]) => this.mode ?
-          bookItems.filter(book => book.collection === this.mode) :
-          bookItems
-        )
-      );
+    this.books$ = this.store$.pipe(
+      select(selectBookItems),
+      map((bookItems: NgRxBook[]) =>
+        this.mode
+          ? bookItems.filter(book => book.collection === this.mode)
+          : bookItems,
+      ),
+    );
 
     switch (this.mode) {
-      case Collections.READ : {
+      case Collections.READ: {
         this.title = 'Books already read';
         break;
       }
-      case Collections.READING : {
+      case Collections.READING: {
         this.title = 'Books currently reading';
         break;
       }
-      case Collections.TO_READ : {
+      case Collections.TO_READ: {
         this.title = 'Books to read';
         break;
       }
@@ -64,11 +67,13 @@ export class BooksShelfComponent implements OnInit {
     }
   }
 
-  changeCollectionHandler({book, newCollection}) {
-    this.store$.dispatch(new UpdateBook({
-      ...book,
-      collection: newCollection,
-    }));
+  changeCollectionHandler({ book, newCollection }) {
+    this.store$.dispatch(
+      new UpdateBook({
+        ...book,
+        collection: newCollection,
+      }),
+    );
   }
 
   newBookHandler(newBook) {

@@ -5,5 +5,9 @@ import { NgRxBook } from '../model/models';
 export const selectBooksState = createFeatureSelector('books');
 export const selectBookItems = createSelector(
   selectBooksState,
-  (booksState: BooksState): NgRxBook[] => booksState.items
+  (booksState: BooksState): NgRxBook[] => booksState.items,
+);
+export const selectIsLoading = createSelector(
+  selectBooksState,
+  (state: BooksState) => state.loading,
 );
