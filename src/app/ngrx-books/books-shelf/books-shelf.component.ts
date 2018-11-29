@@ -1,15 +1,22 @@
-import {Component, OnInit} from '@angular/core';
-import {Collections} from '../model/models';
-import {ShelfService} from '../services/shelf.service';
-import {ActivatedRoute, Params, Router} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Collections, NgRxBook } from '../model/models';
+import { ShelfService } from '../services/shelf.service';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { NgRxModuleState } from '../store';
+import { Store, select } from '@ngrx/store';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs/Observable';
+import { selectBookItems } from '../store/selectors';
+import { UpdateBook } from '../store/actions';
 
 @Component({
   selector: 'app-books-shelf',
   templateUrl: './books-shelf.component.html',
-  styleUrls: ['./books-shelf.component.scss']
+  styleUrls: ['./books-shelf.component.scss'],
 })
 export class BooksShelfComponent implements OnInit {
   books = [];
+  books$: Observable<NgRxBook[]>;
   title: string;
   mode: Collections | undefined;
   collections = Collections;
@@ -18,6 +25,7 @@ export class BooksShelfComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private shelfService: ShelfService,
+    private store$: Store<NgRxModuleState>,
   ) {}
 
   ngOnInit() {
@@ -29,31 +37,39 @@ export class BooksShelfComponent implements OnInit {
   }
 
   private getData() {
+    this.books$ = this.store$.pipe(
+      select(selectBookItems),
+      map((books: NgRxBook[]) =>
+        this.mode
+          ? books.filter((book: NgRxBook) => book.collection === this.mode)
+          : books,
+      ),
+    );
+
     switch (this.mode) {
-      case Collections.READ : {
-        this.books = this.shelfService.getBookRead();
+      case Collections.READ: {
         this.title = 'Books already read';
         break;
       }
-      case Collections.READING : {
-        this.books = this.shelfService.getBooksReading();
+      case Collections.READING: {
         this.title = 'Books currently reading';
         break;
       }
-      case Collections.TO_READ : {
-        this.books = this.shelfService.getBooksToRead();
+      case Collections.TO_READ: {
         this.title = 'Books to read';
         break;
       }
       default: {
-        this.books = this.shelfService.getBooks();
         this.title = 'All my books';
       }
     }
   }
 
-  changeCollectionHandler({book, newCollection}) {
+  changeCollectionHandler({ book, newCollection }) {
     console.log('Book has changed collection', book, newCollection);
+    this.store$.dispatch(
+      new UpdateBook({ ...book, collection: newCollection }),
+    );
   }
 
   newBookHandler(newBook) {
